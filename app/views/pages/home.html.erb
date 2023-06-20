@@ -1,11 +1,8 @@
 
-<div data-controller="game-loader">
-<%#= url = 'https://lichess.org/game/export/f22PJAeH'%>
-  <% url = 'https://lichess.org/api/games/user/Paul_Jhonson'%>
-  <% token = 'lip_f0XJ8aEQjHiL496iJF6z' %>
-  <%# game id f22PJAeH %>
-  <%# user id silent633 %>
-  <div data-game-loader-target = "gamesMoves">
+<div data-controller="game-loader" class = "container">
+  <div data-game-loader-target = "gamesMoves" class = movesContainer>
+  </div>
+  <div data-game-loader-target = "gamesStats" class = "statsContainer">
   </div>
 
 </div>

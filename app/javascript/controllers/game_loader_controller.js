@@ -12,7 +12,7 @@ import { Controller } from "@hotwired/stimulus"
 // console.log(JSON.stringify(res, null, 2))
 // Connects to data-controller="game-loader"
 export default class extends Controller {
-  static targets = ["gamesMoves"]
+  static targets = ["gamesMoves", "gamesStats"]
 
 
   connect() {
@@ -22,7 +22,7 @@ export default class extends Controller {
     const allMovesObject = this.#createAllMovesObject()
     console.log(allMovesObject["0-0"])
     console.log(allMovesObject)
-    const user = "Paul_Jhonson"
+    const user = "Paul_Jhonson" //"DrNykterstein"
     const url = `https://lichess.org/api/games/user/${user}`;
     const headers = {
       Authorization:  `Bearer ${token}`,
@@ -37,38 +37,32 @@ export default class extends Controller {
         // console.log("game[0]: ", games[0])
         // console.log("data type: ", data.constructor.name)
         // console.log("game[0]->Json: ", parser.pgn2json(games[0]))
-        let count = 0
+
         games.forEach((game, i) => {
           let style = ""
             console.log(i, game)
             if (game != "" && game != undefined) {
               let parsedGame = JSON.parse(parser.pgn2json(game));
-
-
-              // console.log(game)
-              // console.log(game.constructor.name)
-              let movesString = ""
-             parsedGame.moves.forEach(move => {
-                movesString = `${movesString} ${move}, `
+              // let movesString = ""
+              parsedGame.moves.forEach(move => {
+                // movesString = `${movesString} ${move}, `
                 allMovesObject[move] += 1;
               });
-              movesString +=parsedGame.str.Result
-              if(parsedGame.str.White == "Paul_Jhonson" &&parsedGame.str.Result == "1-0") {
-                movesString += "You won!"
-                style = "color: green"
+              // movesString +=parsedGame.str.Result
+              // if(parsedGame.str.White == user &&parsedGame.str.Result == "1-0") {
+              //   movesString += "You won!"
+              //   style = "color: green"
 
-              }
-              else if(parsedGame.str.Black == "Paul_Jhonson" &&parsedGame.str.Result == "0-1"){
-                movesString += "You won!"
-                style = "color: green"
-              }
-              else {
-                movesString += "You lost :/"
-                style = "color: red"
-              }
-              const tag = `<p style= "${style}">${i+1}: ${movesString + "\n\n"} </p>`
-              this.gamesMovesTarget.insertAdjacentHTML("beforeend", tag)
-              count+=1;
+              // }
+              // else if(parsedGame.str.Black == user &&parsedGame.str.Result == "0-1"){
+              //   movesString += "You won!"
+              //   style = "color: green"
+              // }
+              // else {
+              //   movesString += "You lost :/"
+              //   style = "color: red"
+              // }
+
             }
         })
         const sortedMoves = Object.entries(allMovesObject)
@@ -82,14 +76,74 @@ export default class extends Controller {
         console.log("111111111111111111")
         console.log(sortedMoves)
         console.log("222222222222222222")
+
+        let count = 0
+
         for (const [key, value] of Object.entries(sortedMoves)) {
-          console.log(`${key}: ${value}`);
+          const moveTag = `<p>${count+1}- ${key}: ${value} </p>`
+          this.gamesMovesTarget.insertAdjacentHTML("beforeend", moveTag)
+          count+=1;
+
         }
 
+        this.#pMovesPlayed(sortedMoves)
+        this.#pMatesPlayed(sortedMoves)
+        this.#pSimplePlayed(sortedMoves)
         // var json = parser.pgn2json(data);
         // console.log(json)
       });
     console.log("please tell me we're here!")
+  }
+
+  #pMovesPlayed(sortedMoves){
+    let playedCount = 0
+    let notPlayedCount = 0
+    for (const [key, value] of Object.entries(sortedMoves)) {
+
+      if(value > 0){
+        playedCount += 1;
+      }
+      else {
+        notPlayedCount += 1;
+      }
+    }
+    const percentageTag = `<p>${(100*playedCount/(playedCount+notPlayedCount)).toFixed(2)}% of Moves Complete</p>`
+    this.gamesStatsTarget.insertAdjacentHTML("beforeend", percentageTag)
+  }
+
+  #pMatesPlayed(sortedMoves){
+    let playedCount = 0
+    let notPlayedCount = 0
+    for (const [key, value] of Object.entries(sortedMoves)) {
+
+      if(key.substring(key.length-1, key.length) == "#") {
+        if(value > 0 ){
+          playedCount += 1;
+        }
+        else {
+          notPlayedCount += 1;
+        }
+      }
+    }
+    const percentageTag = `<p>${(100*playedCount/(playedCount+notPlayedCount)).toFixed(2)}% of Mates Complete</p>`
+    this.gamesStatsTarget.insertAdjacentHTML("beforeend", percentageTag)
+  }
+
+  #pSimplePlayed(sortedMoves){
+    let playedCount = 0
+    let notPlayedCount = 0
+    for (const [key, value] of Object.entries(sortedMoves)) {
+      if(key.substring(key.length-1, key.length) != "#" && key.substring(key.length-1, key.length) != "+") {
+        if(value > 0 ){
+          playedCount += 1;
+        }
+        else {
+          notPlayedCount += 1;
+        }
+      }
+    }
+    const percentageTag = `<p>${(100*playedCount/(playedCount+notPlayedCount)).toFixed(2)}% of simple moves Complete</p>`
+    this.gamesStatsTarget.insertAdjacentHTML("beforeend", percentageTag)
   }
 
   #createAllMovesObject(){
@@ -165,30 +219,74 @@ export default class extends Controller {
                             "a1=Q","b1=Q","c1=Q","d1=Q","e1=Q","f1=Q","g1=Q","h1=Q",
                             "a8=Q","b8=Q","c8=Q","d8=Q","e8=Q","f8=Q","g8=Q","h8=Q"]
 
-    const castleMoves = ["0-0", "0-0-0"]
+    const pawnCaptures = [  "axb2","axb3","axb4","axb5","axb6","axb7",
+                            "bxa2","bxa3","bxa4","bxa5","bxa6","bxa7",
+                            "bxc2","bxc3","bxc4","bxc5","bxc6","bxc7",
+                            "cxb2","cxb3","cxb4","cxb5","cxb6","cxb7",
+                            "cxd2","cxd3","cxd4","cxd5","cxd6","cxd7",
+                            "dxc2","dxc3","dxc4","dxc5","dxc6","dxc7",
+                            "dxe2","dxe3","dxe4","dxe5","dxe6","dxe7",
+                            "exd2","exd3","exd4","exd5","exd6","exd7",
+                            "exf2","exf3","exf4","exf5","exf6","exf7",
+                            "fxe2","fxe3","fxe4","fxe5","fxe6","fxe7",
+                            "fxg2","fxg3","fxg4","fxg5","fxg6","fxg7",
+                            "gxf2","gxf3","gxf4","gxf5","gxf6","gxf7",
+                            "gxh2","gxh3","gxh4","gxh5","gxh6","gxh7",
+                            "hxg2","hxg3","hxg4","hxg5","hxg6","hxg7",
+                            "bxa1=N","axb1=N","cxb1=N","bxc1=N","dxc1=N","cxd1=N","exd1=N","dxe1=N","fxe1=N","exf1=N","gxf1=N","fxg1=N","hxg1=N","gxh1=N",
+                            "bxa8=N","axb8=N","cxb8=N","bxc8=N","dxc8=N","cxd8=N","exd8=N","dxe8=N","fxe8=N","exf8=N","gxf8=N","fxg8=N","hxg8=N","gxh8=N",
+                            "bxa1=B","axb1=B","cxb1=B","bxc1=B","dxc1=B","cxd1=B","exd1=B","dxe1=B","fxe1=B","exf1=B","gxf1=B","fxg1=B","hxg1=B","gxh1=B",
+                            "bxa8=B","axb8=B","cxb8=B","bxc8=B","dxc8=B","cxd8=B","exd8=B","dxe8=B","fxe8=B","exf8=B","gxf8=B","fxg8=B","hxg8=B","gxh8=B",
+                            "bxa1=R","axb1=R","cxb1=R","bxc1=R","dxc1=R","cxd1=R","exd1=R","dxe1=R","fxe1=R","exf1=R","gxf1=R","fxg1=R","hxg1=R","gxh1=R",
+                            "bxa8=R","axb8=R","cxb8=R","bxc8=R","dxc8=R","cxd8=R","exd8=R","dxe8=R","fxe8=R","exf8=R","gxf8=R","fxg8=R","hxg8=R","gxh8=R",
+                            "bxa1=Q","axb1=Q","cxb1=Q","bxc1=Q","dxc1=Q","cxd1=Q","exd1=Q","dxe1=Q","fxe1=Q","exf1=Q","gxf1=Q","fxg1=Q","hxg1=Q","gxh1=Q",
+                            "bxa8=Q","axb8=Q","cxb8=Q","bxc8=Q","dxc8=Q","cxd8=Q","exd8=Q","dxe8=Q","fxe8=Q","exf8=Q","gxf8=Q","fxg8=Q","hxg8=Q","gxh8=Q"]
 
-    const allSimpleMoves = pawnMoves.concat(knightMoves).concat(bishopMoves).concat(rookMoves).concat(queenMoves).concat(kingMoves).concat(promotionMoves).concat(castleMoves)
+    const castleMoves = ["O-O", "O-O-O"]
+    const letters = ["a","b","c","d","e","f","g","h"]
     const allPieceCaptures = knightMoves.concat(bishopMoves).concat(rookMoves).concat(queenMoves).concat(kingMoves)
+    const allAmbPieces =  knightMoves.concat(rookMoves).concat(queenMoves)//.concat(bishopMoves)optional to add bishops but basically never exists
+    const allSimpleMoves = pawnMoves.concat(knightMoves).concat(bishopMoves).concat(rookMoves).concat(queenMoves).concat(kingMoves).concat(promotionMoves).concat(castleMoves).concat(pawnCaptures)
     const allChecks = []
     const allMates = []
     const allCaptures = []
+    const allAmb = []
 
-    pawnMoves.forEach((move) =>{
-      allCaptures.push(move +)
-    })
-
+    // adding piece captures
     allPieceCaptures.forEach((move) => {
-      allCaptures.push(move.substring(0,1) + "x" + x.substring(1, move.length))
-    })
 
+      allCaptures.push(move.substring(0,1) + "x" + move.substring(1, move.length))
+    });
+
+    allAmbPieces.forEach((move) => {
+      for(let i = 0; i <= 7; i++){
+        allAmb.push(move.substring(0,1) + (i+1) + move.substring(1, move.length))
+        allAmb.push(move.substring(0,1) + letters[i] + move.substring(1, move.length))
+        allCaptures.push(move.substring(0,1) + (i+1) + "x" + move.substring(1, move.length))
+        allCaptures.push(move.substring(0,1) + letters[i] + "x" + move.substring(1, move.length))
+      }
+    });
+
+    ////////////////////////////////////////////////////
     //adding + and # to all the moves we all ready have
+    ////////////////////////////////////////////////////
     allSimpleMoves.forEach((move) => {
       allChecks.push(`${move}+`)
       allMates.push(`${move}#`)
 
     });
 
-    const allMoves = allSimpleMoves.concat(allChecks).concat(allMates)
+    allCaptures.forEach((move) => {
+      allChecks.push(`${move}+`)
+      allMates.push(`${move}#`)
+    })
+
+    allAmb.forEach((move) => {
+      allChecks.push(`${move}+`)
+      allMates.push(`${move}#`)
+    })
+
+    const allMoves = allSimpleMoves.concat(allChecks).concat(allMates).concat(allCaptures).concat(allAmb)
 
     let allMovesObject = Object.assign({}, ...allMoves.map((move) => ({[move]: 0})));
 
