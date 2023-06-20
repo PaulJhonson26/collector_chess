@@ -1,2 +1,10 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+
+<div data-controller="game-loader">
+<%#= url = 'https://lichess.org/game/export/f22PJAeH'%>
+  <% url = 'https://lichess.org/api/games/user/Paul_Jhonson'%>
+  <% token = 'lip_f0XJ8aEQjHiL496iJF6z' %>
+  <%# game id f22PJAeH %>
+  <%# user id silent633 %>
+  <p data-game-loader-target = "gamesMoves"></p>
+
+</div>
