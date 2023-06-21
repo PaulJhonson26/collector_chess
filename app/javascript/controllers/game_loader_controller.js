@@ -10,10 +10,34 @@ export default class extends Controller {
     Moves = {}
   }
   filter(e) {
+
     e.preventDefault();
-    document.querySelector(".statsContainer").innerHTML = ""
-    this.gamesStatsTarget.insertAdjacentHTML("beforeend", "wazzaa")
-    console.log(this.checksTarget.value)
+    this.gamesMovesTarget.innerHTML = "";
+    console.log("Checks ",this.checksTarget.checked)
+    console.log("Mates ",this.matesTarget.checked)
+    console.log("Regulars ",this.regularsTarget.checked)
+    let filteredMoves = {}
+    for (const [key, value] of Object.entries(Moves)) {
+      if (this.checksTarget.checked == true){
+        if(key.substring(key.length-1, key.length) == "+"){
+          filteredMoves[key] = value
+        }
+
+      }
+      if (this.matesTarget.checked == true){
+        if(key.substring(key.length-1, key.length) == "#"){
+          filteredMoves[key] = value
+        }
+      }
+      if (this.regularsTarget.checked == true){
+        if(key.substring(key.length-1, key.length) != "#" && key.substring(key.length-1, key.length) != "+"){
+          filteredMoves[key] = value
+        }
+      }
+    }
+    console.log(filteredMoves)
+    this.#createCards(filteredMoves)
+
   }
   submit(e) {
     e.preventDefault();
@@ -50,49 +74,52 @@ export default class extends Controller {
         //const sortedMoves = allMovesObject
         Moves = allMovesObject
         const sortedMoves = this.#sortObject(allMovesObject)
-        console.log("statifying")
+
+        //adding stats to page
         this.#pMovesPlayed(sortedMoves)
         this.#pMatesPlayed(sortedMoves)
         this.#pSimplePlayed(sortedMoves)
-        console.log("statife")
 
-        const mostMovesCount = sortedMoves[Object.keys(sortedMoves)[0]];
+        this.#createCards(allMovesObject)
 
-
-        console.log(allMovesObject)
-        console.log(sortedMoves)
-
-        let count = 0
-        const template = document.querySelector("#template-move");
-
-        for (const [key, value] of Object.entries(allMovesObject)) {
-          const clone = template.content.cloneNode(true);
-          const movesContainer = document.querySelector("#movesContainer")
-          let rgb = this.#RGBCalc(mostMovesCount, value)
-
-          let h4 = clone.querySelector(".card-move-notation")
-          let p = clone.querySelector(".card-move-count")
-          let div = clone.querySelector("div")
-
-          h4.textContent = key
-          h4.style.color = `rgb(${rgb[3]},${rgb[3]},${rgb[3]})`
-
-          p.textContent = value
-          p.style.color = `rgb(${rgb[3]},${rgb[3]},${rgb[3]})`
-
-
-          div.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
-          movesContainer.appendChild(clone);
-          // const moveTag = `<p>${count+1}- ${key}: ${value} </p>`
-          // this.gamesMovesTarget.insertAdjacentHTML("beforeend", moveTag)
-          count+=1;
-
-        }
 
 
         // var json = parser.pgn2json(data);
         // console.log(json)
       });
+  }
+
+  #createCards(allMovesObject){
+    const sortedMoves = this.#sortObject(allMovesObject)
+    const mostMovesCount = sortedMoves[Object.keys(sortedMoves)[0]];
+
+    let count = 0
+
+    const template = document.querySelector("#template-move");
+
+    for (const [key, value] of Object.entries(allMovesObject)) {
+      const clone = template.content.cloneNode(true);
+      const movesContainer = document.querySelector("#movesContainer")
+      let rgb = this.#RGBCalc(mostMovesCount, value)
+
+      let h4 = clone.querySelector(".card-move-notation")
+      let p = clone.querySelector(".card-move-count")
+      let div = clone.querySelector("div")
+
+      h4.textContent = key
+      h4.style.color = `rgb(${rgb[3]},${rgb[3]},${rgb[3]})`
+
+      p.textContent = value
+      p.style.color = `rgb(${rgb[3]},${rgb[3]},${rgb[3]})`
+
+
+      div.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
+      movesContainer.appendChild(clone);
+      // const moveTag = `<p>${count+1}- ${key}: ${value} </p>`
+      // this.gamesMovesTarget.insertAdjacentHTML("beforeend", moveTag)
+      count+=1;
+
+    }
   }
 
   #sortObject(object){
