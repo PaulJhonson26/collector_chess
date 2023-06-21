@@ -1,11 +1,12 @@
 // Specific CSS for your home-page
 .container{
- width: 90%;
+ width: 100vw;
  margin: 0, auto;
 }
 
 .movesContainer {
-  padding: 20px;
+  // width: 100%;
+  // padding: 20px;
   flex-wrap: wrap;
   display: flex;
   p {
@@ -17,21 +18,48 @@
 .statsContainer{
   width: 100%;
   padding: 20px;
+  color : white
 
 }
 
 .card-move{
   margin:2px;
-  width: 80px;
-  height: 80px;
-  color: white;
+  width: 35px;
+  height: 35px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  border-radius: 2px;
+
+}
+.card-move:hover {
+  background-color: #111111;
+  transition: 0.3s ease;
+}
+body {
+  background-color: #222222;
+  color: white
 }
 
-body {
-  background-color: black;
-  color: white
+.card-move-notation{
+  padding: 0;
+  margin: 0;
+  font-size: 8px;
+
+}
+
+.card-move-count{
+  padding: 0;
+  margin: 0;
+  font-size: 9px;
+}
+
+.username-form{
+  display: flex;
+  justify-content: center;
+  input, label {
+    padding-inline: 5px;
+  }
+  padding: 10px;
 }

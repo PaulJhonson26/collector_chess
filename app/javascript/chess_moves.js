@@ -95,7 +95,7 @@ const createAllMovesObject = () => {
       "bxa8=Q","axb8=Q","cxb8=Q","bxc8=Q","dxc8=Q","cxd8=Q","exd8=Q","dxe8=Q","fxe8=Q","exf8=Q","gxf8=Q","fxg8=Q","hxg8=Q","gxh8=Q"]
 
   const castleMoves = ["O-O", "O-O-O"]
-  
+
   const letters = ["a","b","c","d","e","f","g","h"]
   const allPieceCaptures = knightMoves.concat(bishopMoves).concat(rookMoves).concat(queenMoves).concat(kingMoves)
   const allAmbPieces =  knightMoves.concat(rookMoves).concat(queenMoves)//.concat(bishopMoves)optional to add bishops but basically never exists
@@ -111,14 +111,14 @@ const createAllMovesObject = () => {
   allCaptures.push(move.substring(0,1) + "x" + move.substring(1, move.length))
   });
 
-  allAmbPieces.forEach((move) => {
-  for(let i = 0; i <= 7; i++){
-  allAmb.push(move.substring(0,1) + (i+1) + move.substring(1, move.length))
-  allAmb.push(move.substring(0,1) + letters[i] + move.substring(1, move.length))
-  allCaptures.push(move.substring(0,1) + (i+1) + "x" + move.substring(1, move.length))
-  allCaptures.push(move.substring(0,1) + letters[i] + "x" + move.substring(1, move.length))
-  }
-  });
+  // allAmbPieces.forEach((move) => {
+  // for(let i = 0; i <= 7; i++){
+  // allAmb.push(move.substring(0,1) + (i+1) + move.substring(1, move.length))
+  // allAmb.push(move.substring(0,1) + letters[i] + move.substring(1, move.length))
+  // allCaptures.push(move.substring(0,1) + (i+1) + "x" + move.substring(1, move.length))
+  // allCaptures.push(move.substring(0,1) + letters[i] + "x" + move.substring(1, move.length))
+  // }
+  // });
 
   ////////////////////////////////////////////////////
   //adding + and # to all the moves we all ready have
@@ -134,12 +134,12 @@ const createAllMovesObject = () => {
   allMates.push(`${move}#`)
   })
 
-  allAmb.forEach((move) => {
-  allChecks.push(`${move}+`)
-  allMates.push(`${move}#`)
-  })
+  // allAmb.forEach((move) => {
+  // allChecks.push(`${move}+`)
+  // allMates.push(`${move}#`)
+  // })
 
-  const allMoves = allSimpleMoves.concat(allChecks).concat(allMates).concat(allCaptures).concat(allAmb)
+  const allMoves = allSimpleMoves.concat(allChecks).concat(allMates).concat(allCaptures)//.concat(allAmb)
 
   let allMovesObject = Object.assign({}, ...allMoves.map((move) => ({[move]: 0})));
 

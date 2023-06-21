@@ -1,28 +1,29 @@
 import { Controller } from "@hotwired/stimulus"
 import { createAllMovesObject } from "chess_moves"
-// <% url = 'https://lichess.org/api/games/user/Paul_Jhonson'%>
-// <% token = 'lip_f0XJ8aEQjHiL496iJF6z' %>
-// <%#game id f22PJAeH %>
-// <%# user id silent633 %>
-// <% URI.open(url,'Accept' => 'application/json', 'Authorization' => "Bearer #{token}") do |response| %>
-//   <% response.each_line do |line| %>
-//     <%= line%>
-//   <% end %>
-// <% end %>
-// let game = parse('[White "Me"] [Black "Magnus"] 1. f4 e5 2. g4 Qh4#', {startRule: "game"})
-// console.log(JSON.stringify(res, null, 2))
-// Connects to data-controller="game-loader"
+
+let Moves;
+
 export default class extends Controller {
-  static targets = ["gamesMoves", "gamesStats"]
+  static targets = ["gamesMoves", "gamesStats", "username", "checks", "mates", "regulars"]
 
   connect() {
-
+    Moves = {}
+  }
+  filter(e) {
+    e.preventDefault();
+    document.querySelector(".statsContainer").innerHTML = ""
+    this.gamesStatsTarget.insertAdjacentHTML("beforeend", "wazzaa")
+    console.log(this.checksTarget.value)
+  }
+  submit(e) {
+    e.preventDefault();
+    const user = this.usernameTarget.value
+    this.usernameTarget.value = user
+    console.log(user)
 
     const token = 'lip_tBb1t8gdHDGhWMlrmd7i';
     const allMovesObject = createAllMovesObject()
-    console.log(allMovesObject["0-0"])
-    console.log(allMovesObject)
-    const user = "Paul_Jhonson"//"DrNykterstein"
+
     const url = `https://lichess.org/api/games/user/${user}`;
     const headers = {
       Authorization:  `Bearer ${token}`,
@@ -33,10 +34,6 @@ export default class extends Controller {
       .then(data => {
         console.log(data)
         let games = data.split(/\n\n\n/)
-        // console.log("games type: ", games[0].constructor.name)
-        // console.log("game[0]: ", games[0])
-        // console.log("data type: ", data.constructor.name)
-        // console.log("game[0]->Json: ", parser.pgn2json(games[0]))
 
         games.forEach((game, i) => {
           let style = ""
@@ -48,45 +45,33 @@ export default class extends Controller {
                 // movesString = `${movesString} ${move}, `
                 allMovesObject[move] += 1;
               });
-              // movesString +=parsedGame.str.Result
-              // if(parsedGame.str.White == user &&parsedGame.str.Result == "1-0") {
-              //   movesString += "You won!"
-              //   style = "color: green"
-
-              // }
-              // else if(parsedGame.str.Black == user &&parsedGame.str.Result == "0-1"){
-              //   movesString += "You won!"
-              //   style = "color: green"
-              // }
-              // else {
-              //   movesString += "You lost :/"
-              //   style = "color: red"
-              // }
-
             }
         })
-        const sortedMoves = Object.entries(allMovesObject)
-          .sort((a, b) => b[1] - a[1]) // Sort in descending order of values
-          .reduce((acc, [key, value]) => {
-            acc[key] = value;
-            return acc;
-          }, {});
+        //const sortedMoves = allMovesObject
+        Moves = allMovesObject
+        const sortedMoves = this.#sortObject(allMovesObject)
+        console.log("statifying")
+        this.#pMovesPlayed(sortedMoves)
+        this.#pMatesPlayed(sortedMoves)
+        this.#pSimplePlayed(sortedMoves)
+        console.log("statife")
+
+        const mostMovesCount = sortedMoves[Object.keys(sortedMoves)[0]];
+
 
         console.log(allMovesObject)
-        console.log("111111111111111111")
         console.log(sortedMoves)
-        console.log("222222222222222222")
 
         let count = 0
         const template = document.querySelector("#template-move");
-        const mostMovesCount = sortedMoves[Object.keys(sortedMoves)[0]];
-        for (const [key, value] of Object.entries(sortedMoves)) {
+
+        for (const [key, value] of Object.entries(allMovesObject)) {
           const clone = template.content.cloneNode(true);
           const movesContainer = document.querySelector("#movesContainer")
           let rgb = this.#RGBCalc(mostMovesCount, value)
 
-          let h4 = clone.querySelector("h4")
-          let p = clone.querySelector("p")
+          let h4 = clone.querySelector(".card-move-notation")
+          let p = clone.querySelector(".card-move-count")
           let div = clone.querySelector("div")
 
           h4.textContent = key
@@ -104,23 +89,29 @@ export default class extends Controller {
 
         }
 
-        this.#pMovesPlayed(sortedMoves)
-        this.#pMatesPlayed(sortedMoves)
-        this.#pSimplePlayed(sortedMoves)
+
         // var json = parser.pgn2json(data);
         // console.log(json)
       });
-    console.log("please tell me we're here!")
   }
 
+  #sortObject(object){
+    const sortedMoves = Object.entries(object)
+          .sort((a, b) => b[1] - a[1]) // Sort in descending order of values
+          .reduce((acc, [key, value]) => {
+            acc[key] = value;
+            return acc;
+          }, {});
+    return sortedMoves
+  }
   #RGBCalc(mostMovesCount, value){
-    let ratio = 255/(mostMovesCount*2)
-    let R = 255 - value*ratio*2
-    let G = 255 - value*ratio
-    let B = 255 - value*ratio*2
+    let ratio = 255/(Math.cbrt(mostMovesCount))
+    let R = 255 - Math.sqrt(value)*ratio
+    let G = 255 - Math.sqrt(value)*ratio + 50
+    let B = 255 - Math.sqrt(value)*ratio
 
     let text =0
-    if( value*ratio*2 < 128) {
+    if( Math.sqrt(value)*ratio < 128) {
       text = 0
     }
     else {
@@ -143,7 +134,7 @@ export default class extends Controller {
       }
     }
     const percentageTag = `<p>${(100*playedCount/(playedCount+notPlayedCount)).toFixed(2)}% of Moves Complete</p>`
-    this.gamesStatsTarget.insertAdjacentHTML("beforeend", percentageTag)
+    document.querySelector(".statsContainer").insertAdjacentHTML("beforeend", percentageTag)
   }
 
   #pMatesPlayed(sortedMoves){
@@ -161,7 +152,7 @@ export default class extends Controller {
       }
     }
     const percentageTag = `<p>${(100*playedCount/(playedCount+notPlayedCount)).toFixed(2)}% of Mates Complete</p>`
-    this.gamesStatsTarget.insertAdjacentHTML("beforeend", percentageTag)
+    document.querySelector(".statsContainer").insertAdjacentHTML("beforeend", percentageTag)
   }
 
   #pSimplePlayed(sortedMoves){
@@ -178,6 +169,6 @@ export default class extends Controller {
       }
     }
     const percentageTag = `<p>${(100*playedCount/(playedCount+notPlayedCount)).toFixed(2)}% of simple moves Complete</p>`
-    this.gamesStatsTarget.insertAdjacentHTML("beforeend", percentageTag)
+    document.querySelector(".statsContainer").insertAdjacentHTML("beforeend", percentageTag)
   }
 }
