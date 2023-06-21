@@ -1,8 +1,16 @@
 
 <div data-controller="game-loader" class = "container">
-  <div data-game-loader-target = "gamesMoves" class = movesContainer>
-  </div>
   <div data-game-loader-target = "gamesStats" class = "statsContainer">
   </div>
+  <div data-game-loader-target = "gamesMoves" class = "movesContainer" id = "movesContainer">
+  </div>
+
 
 </div>
+
+<template id = "template-move">
+  <div class = "card-move">
+    <h4 class = "card-move-notation"></h4>
+    <p class = "card-move-count"></p>
+  </div>
+</template>
