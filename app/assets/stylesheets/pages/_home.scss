@@ -7,11 +7,7 @@
 .movesContainer {
   // width: 100%;
   // padding: 20px;
-  flex-wrap: wrap;
-  display: flex;
-  p {
-    padding: 0;
-  }
+
 
 }
 
@@ -114,5 +110,27 @@ body {
 
 .icon-stats{
   font-size: 25px;
-  
+
+}
+
+.collected-moves{
+
+  flex-wrap: wrap;
+  display: flex;
+  p {
+    padding: 0;
+  }
+}
+
+.locked-moves{
+  margin-top: 30px;
+  flex-wrap: wrap;
+  display: flex;
+  p {
+    padding: 0;
+  }
+}
+
+.loading{
+  font-size: 26px;
 }

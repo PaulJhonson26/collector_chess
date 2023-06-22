@@ -4,13 +4,14 @@ import { createAllMovesObject } from "chess_moves"
 let Moves;
 
 export default class extends Controller {
-  static targets = ["gamesMoves", "gamesStats", "username", "checks", "mates", "regulars", "takes"]
+  static targets = ["collectedMoves", "lockedMoves","gamesStats", "username", "checks", "mates", "regulars", "takes", "loading"]
 
   connect() {
     Moves = {}
   }
   filter(e) {
-    this.gamesMovesTarget.innerHTML = "";
+    this.collectedMovesTarget.innerHTML = "";
+    this.lockedMovesTarget.innerHTML = "";
     console.log("Checks ",this.checksTarget.checked)
     console.log("Mates ",this.matesTarget.checked)
     console.log("Regulars ",this.regularsTarget.checked)
@@ -35,22 +36,13 @@ export default class extends Controller {
     }
     console.log(filteredMoves)
     /// filtering checks
-    if(this.takesTarget.checked == false){
-      this.#createCards(filteredMoves)
-    }
-    else {
-      let noTakesMoves = {}
-      for (const [key, value] of Object.entries(filteredMoves)) {
-        if(key.includes("x") == false){
-          noTakesMoves[key] = value
-        }
-      }
-      this.#createCards(noTakesMoves)
-    }
+    this.#createCards(this.#filterChecks(filteredMoves))
+
 
 
   }
   submit(e) {
+    this.loadingTarget.classList.toggle("d-none")
     e.preventDefault();
     const user = this.usernameTarget.value
     this.usernameTarget.value = user
@@ -90,8 +82,9 @@ export default class extends Controller {
         this.#pMovesPlayed(sortedMoves)
         this.#pMatesPlayed(sortedMoves)
         this.#pSimplePlayed(sortedMoves)
-
+        this.loadingTarget.classList.toggle("d-none")
         this.#createCards(allMovesObject)
+
 
 
 
@@ -110,7 +103,8 @@ export default class extends Controller {
 
     for (const [key, value] of Object.entries(allMovesObject)) {
       const clone = template.content.cloneNode(true);
-      const movesContainer = document.querySelector("#movesContainer")
+      const collectedMoves = document.querySelector("#collected-moves")
+      const lockedMoves = document.querySelector("#locked-moves")
       let rgb = this.#RGBCalc(mostMovesCount, value)
 
       let h4 = clone.querySelector(".card-move-notation")
@@ -125,11 +119,31 @@ export default class extends Controller {
 
 
       div.style.backgroundColor = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
-      movesContainer.appendChild(clone);
+      if(value > 0){
+        collectedMoves.appendChild(clone);
+      }
+      else{
+        lockedMoves.appendChild(clone)
+      }
       // const moveTag = `<p>${count+1}- ${key}: ${value} </p>`
       // this.gamesMovesTarget.insertAdjacentHTML("beforeend", moveTag)
       count+=1;
 
+    }
+  }
+
+  #filterChecks(filteredMoves){
+    if(this.takesTarget.checked == false){
+      return filteredMoves
+    }
+    else {
+      let noTakesMoves = {}
+      for (const [key, value] of Object.entries(filteredMoves)) {
+        if(key.includes("x") == false){
+          noTakesMoves[key] = value
+        }
+      }
+      return noTakesMoves
     }
   }
 

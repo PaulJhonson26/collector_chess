@@ -3,9 +3,11 @@
   <div class = "dashboard">
     <div class = "container-inputs">
       <form class ="username-form">
+
         <label>Username</label>
         <input type="text" id="usernameInput" data-game-loader-target = "username">
         <input type="submit" value="Submit" data-action="click->game-loader#submit">
+        <i class="fa-solid fa-spinner fa-spin d-none loading" data-game-loader-target = "loading"></i>
       </form>
       <div class = "container-all-filters">
         <div class = "container-basic-misc">
@@ -75,7 +77,11 @@
     </div>
   </div>
 
-  <div data-game-loader-target = "gamesMoves" class = "movesContainer" id = "movesContainer">
+  <div class = "movesContainer" id = "movesContainer">
+    <div data-game-loader-target = "collectedMoves" class = collected-moves id = collected-moves>
+    </div>
+    <div data-game-loader-target = "lockedMoves"class = locked-moves id = locked-moves>
+    </div>
   </div>
 
 
