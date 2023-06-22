@@ -8,15 +8,13 @@
 
   <form class ="username-form">
   <label>Regular Moves</label>
-    <input type="checkbox" id="usernameInput" data-game-loader-target = "regulars">
+    <input type="checkbox" id="usernameInput" data-game-loader-target = "regulars" data-action="click->game-loader#filter">
     <label>Checks</label>
-    <input type="checkbox" id="usernameInput" data-game-loader-target = "checks">
+    <input type="checkbox" id="usernameInput" data-game-loader-target = "checks" data-action="click->game-loader#filter">
     <label>Checkmates</label>
-    <input type="checkbox" id="usernameInput" data-game-loader-target = "mates">
+    <input type="checkbox" id="usernameInput" data-game-loader-target = "mates" data-action="click->game-loader#filter">
     <label>Exclude Captures</label>
-    <input type="checkbox" id="usernameInput" data-game-loader-target = "takes">
-
-    <input type="submit" value="Filter" data-action="click->game-loader#filter">
+    <input type="checkbox" id="usernameInput" data-game-loader-target = "takes" data-action="click->game-loader#filter">
   </form>
 
   <div data-game-loader-target = "gamesStats" class = "statsContainer" id = "statsContainer">

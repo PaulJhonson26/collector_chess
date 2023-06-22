@@ -10,8 +10,6 @@ export default class extends Controller {
     Moves = {}
   }
   filter(e) {
-
-    e.preventDefault();
     this.gamesMovesTarget.innerHTML = "";
     console.log("Checks ",this.checksTarget.checked)
     console.log("Mates ",this.matesTarget.checked)
