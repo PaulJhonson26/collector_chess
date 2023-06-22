@@ -4,7 +4,7 @@ import { createAllMovesObject } from "chess_moves"
 let Moves;
 
 export default class extends Controller {
-  static targets = ["gamesMoves", "gamesStats", "username", "checks", "mates", "regulars"]
+  static targets = ["gamesMoves", "gamesStats", "username", "checks", "mates", "regulars", "takes"]
 
   connect() {
     Moves = {}
@@ -36,7 +36,20 @@ export default class extends Controller {
       }
     }
     console.log(filteredMoves)
-    this.#createCards(filteredMoves)
+    /// filtering checks
+    if(this.takesTarget.checked == false){
+      this.#createCards(filteredMoves)
+    }
+    else {
+      let noTakesMoves = {}
+      for (const [key, value] of Object.entries(filteredMoves)) {
+        if(key.includes("x") == false){
+          noTakesMoves[key] = value
+        }
+      }
+      this.#createCards(noTakesMoves)
+    }
+
 
   }
   submit(e) {
