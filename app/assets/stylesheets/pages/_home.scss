@@ -16,9 +16,8 @@
 }
 
 .statsContainer{
-  width: 100%;
-  padding: 20px;
-  color : white
+  width: 50%;
+  height: 250px;
 
 }
 
@@ -62,4 +61,58 @@ body {
     padding-inline: 5px;
   }
   padding: 10px;
+}
+
+.dashboard{
+  display: flex;
+}
+.container-inputs{
+  width: 50%;
+  height: 250px;
+}
+
+.container-basic-misc{
+  width: 50%;
+  padding: 10px;
+}
+
+.container-piece{
+  width: 50%;
+  padding: 10px;
+}
+
+.container-all-filters{
+  display: flex;
+  justify-content: space-around;
+}
+
+.filter{
+  padding-inline: 10px;
+  display: flex;
+  flex-direction: column;
+  div {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.filter-basic{
+
+}
+.filter-misc{
+  margin-top: 25px;
+}
+
+.filter-piece{
+
+}
+
+
+.header-stats{
+  margin: 0;
+  padding-inline: 10px;
+}
+
+.icon-stats{
+  font-size: 25px;
+  
 }

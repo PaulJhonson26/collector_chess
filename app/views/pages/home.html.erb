@@ -1,23 +1,78 @@
 
 <div data-controller="game-loader" class = "container">
-  <form class ="username-form">
-    <label>Username</label>
-    <input type="text" id="usernameInput" data-game-loader-target = "username">
-    <input type="submit" value="Submit" data-action="click->game-loader#submit">
-  </form>
+  <div class = "dashboard">
+    <div class = "container-inputs">
+      <form class ="username-form">
+        <label>Username</label>
+        <input type="text" id="usernameInput" data-game-loader-target = "username">
+        <input type="submit" value="Submit" data-action="click->game-loader#submit">
+      </form>
+      <div class = "container-all-filters">
+        <div class = "container-basic-misc">
+          <form class ="filter filter-basic">
+            <div>
+              <label>Checkmates</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "mates" data-action="click->game-loader#filter">
+            </div>
+            <div>
+              <label>Checks</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "checks" data-action="click->game-loader#filter">
+            </div>
+            <div>
+              <label>Regular Moves</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "regulars" data-action="click->game-loader#filter">
+            </div>
+          </form>
 
-  <form class ="username-form">
-  <label>Regular Moves</label>
-    <input type="checkbox" id="usernameInput" data-game-loader-target = "regulars" data-action="click->game-loader#filter">
-    <label>Checks</label>
-    <input type="checkbox" id="usernameInput" data-game-loader-target = "checks" data-action="click->game-loader#filter">
-    <label>Checkmates</label>
-    <input type="checkbox" id="usernameInput" data-game-loader-target = "mates" data-action="click->game-loader#filter">
-    <label>Exclude Captures</label>
-    <input type="checkbox" id="usernameInput" data-game-loader-target = "takes" data-action="click->game-loader#filter">
-  </form>
+          <form class ="filter filter-misc">
+            <div>
+              <label>Exclude Captures </label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "takes" data-action="click->game-loader#filter">
+            </div>
+            <div>
+              <label> Exclude Promotions</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "promotions" data-action="click->game-loader#filter">
+            </div>
+          </form>
+        </div>
+        <div class = "container-piece">
+          <form class ="filter filter-piece">
+            <div>
+              <label>Pawn Moves</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "pawns" data-action="click->game-loader#filter">
+            </div>
+            <div>
+              <label>knight Moves</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "knights" data-action="click->game-loader#filter">
+            </div>
+            <div>
+              <label>Bishop Moves</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "bishops" data-action="click->game-loader#filter">
+            </div>
+            <div>
+              <label>Rook Moves</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "rooks" data-action="click->game-loader#filter">
+            </div>
+            <div>
+              <label>Queen Moves</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "queens" data-action="click->game-loader#filter">
+            </div>
+            <div>
+              <label>King Moves</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "kings" data-action="click->game-loader#filter">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
-  <div data-game-loader-target = "gamesStats" class = "statsContainer" id = "statsContainer">
+    <div data-game-loader-target = "gamesStats" class = "statsContainer" id = "statsContainer">
+      <div class = "d-flex align-items-center">
+        <i class="fa-solid fa-chart-simple icon-stats"></i>
+        <h4 class = "header-stats">Stats</h4>
+      </div>
+
+    </div>
   </div>
 
   <div data-game-loader-target = "gamesMoves" class = "movesContainer" id = "movesContainer">
