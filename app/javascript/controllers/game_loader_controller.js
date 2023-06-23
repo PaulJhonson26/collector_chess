@@ -2,14 +2,27 @@ import { Controller } from "@hotwired/stimulus"
 import { createAllMovesObject } from "chess_moves"
 
 let Moves;
-
+let fMoves;
+////Features to add
+/// click on move and get all games played(json file has game link), just add array games
 export default class extends Controller {
-  static targets = ["collectedMoves", "lockedMoves","gamesStats", "username", "checks", "mates", "regulars", "takes", "loading"]
+  static targets = ["collectedMoves", "lockedMoves","gamesStatsMinor", "gamesStatsMajor", "username", "checks", "mates", "regulars",
+                    "takes", "loading", "pawns", "knights", "bishops", "rooks", "queens", "kings", "promotions",
+                  "sortMethod"]
 
   connect() {
     Moves = {}
   }
-  filter(e) {
+  sort(e = null) {
+    if(e != null){e.preventDefault()}
+
+    const sortedMoves = this.#sortObject(fMoves, this.sortMethodTarget.value)
+    this.collectedMovesTarget.innerHTML = "";
+    this.lockedMovesTarget.innerHTML = "";
+    this.#createCards(sortedMoves)
+
+  }
+  filter() {
     this.collectedMovesTarget.innerHTML = "";
     this.lockedMovesTarget.innerHTML = "";
     console.log("Checks ",this.checksTarget.checked)
@@ -36,7 +49,17 @@ export default class extends Controller {
     }
     console.log(filteredMoves)
     /// filtering checks
-    this.#createCards(this.#filterChecks(filteredMoves))
+    filteredMoves = this.#filterTakes(filteredMoves)
+    filteredMoves = this.#filterPawns(filteredMoves)
+    filteredMoves = this.#filterKnights(filteredMoves)
+    filteredMoves = this.#filterBishops(filteredMoves)
+    filteredMoves = this.#filterRooks(filteredMoves)
+    filteredMoves = this.#filterQueens(filteredMoves)
+    filteredMoves = this.#filterKings(filteredMoves)
+    filteredMoves = this.#filterPromotions(filteredMoves)
+    this.#createCards(filteredMoves)
+    fMoves = filteredMoves
+    this.sort()
 
 
 
@@ -76,14 +99,17 @@ export default class extends Controller {
         })
         //const sortedMoves = allMovesObject
         Moves = allMovesObject
-        const sortedMoves = this.#sortObject(allMovesObject)
+        const sortedMoves = this.#sortObject(allMovesObject, "tpd")
 
         //adding stats to page
-        this.#pMovesPlayed(sortedMoves)
-        this.#pMatesPlayed(sortedMoves)
-        this.#pSimplePlayed(sortedMoves)
+        let allPlayed = this.#pMovesPlayed(sortedMoves)
+        let matesPlayed = this.#pMatesPlayed(sortedMoves)
+        let checksPlayed = this.#pChecksPlayed(sortedMoves)
+        let simplePlayed = this.#pSimplePlayed(sortedMoves)
+
+        this.#createStats(allPlayed, matesPlayed, checksPlayed, simplePlayed)
         this.loadingTarget.classList.toggle("d-none")
-        this.#createCards(allMovesObject)
+        this.filter()
 
 
 
@@ -93,8 +119,35 @@ export default class extends Controller {
       });
   }
 
+  #createStats(allPlayed, matesPlayed, checksPlayed, simplePlayed){
+    const template = document.querySelector("#statBox")
+    allPlayed.forEach((Piece, index) => {
+      const minorStatsContainer = this.gamesStatsMinorTarget
+      const majorStatsContainer = this.gamesStatsMajorTarget
+      const clone = template.content.cloneNode(true);
+      const matesBar = clone.querySelector(".stats-mates")
+      const checksBar = clone.querySelector(".stats-checks")
+      const simpleBar = clone.querySelector(".stats-normal")
+
+      let matesProgression = 100*matesPlayed[index][0]/(matesPlayed[index][0]+matesPlayed[index][1])
+      let checksProgression = 100*checksPlayed[index][0]/(checksPlayed[index][0]+checksPlayed[index][1])
+      let simpleProgression = 100*simplePlayed[index][0]/(simplePlayed[index][0]+simplePlayed[index][1])
+
+      matesBar.style.width = `${matesProgression}%`
+      checksBar.style.width = `${checksProgression}%`
+      simpleBar.style.width = `${simpleProgression}%`
+      //      index < 3 ?  minorStatsContainer.appendChild(clone) : majorStatsContainer.appendChild(clone)
+      if(index<3){
+        minorStatsContainer.appendChild(clone)
+      }
+      else {
+        majorStatsContainer.appendChild(clone)
+      }
+
+    });
+  }
   #createCards(allMovesObject){
-    const sortedMoves = this.#sortObject(allMovesObject)
+    const sortedMoves = this.#sortObject(allMovesObject, "tpd")
     const mostMovesCount = sortedMoves[Object.keys(sortedMoves)[0]];
 
     let count = 0
@@ -131,15 +184,70 @@ export default class extends Controller {
 
     }
   }
-
-  #filterChecks(filteredMoves){
-    if(this.takesTarget.checked == false){
+  #filterPawns(filteredMoves){
+    if(this.pawnsTarget.checked){
       return filteredMoves
     }
     else {
       let noTakesMoves = {}
       for (const [key, value] of Object.entries(filteredMoves)) {
-        if(key.includes("x") == false){
+        if(key.substring(0,1) != key.substring(0,1).toLowerCase()){
+          noTakesMoves[key] = value
+        }
+      }
+      return noTakesMoves
+    }
+  }
+  #filterKnights(filteredMoves){
+    if(this.knightsTarget.checked){
+      return filteredMoves
+    }
+    else {
+      let noTakesMoves = {}
+      for (const [key, value] of Object.entries(filteredMoves)) {
+        if(key.substring(0,1) != "N"){
+          noTakesMoves[key] = value
+        }
+      }
+      return noTakesMoves
+    }
+  }
+  #filterBishops(filteredMoves){
+    if(this.bishopsTarget.checked){
+      return filteredMoves
+    }
+    else {
+      let noTakesMoves = {}
+      for (const [key, value] of Object.entries(filteredMoves)) {
+        if(key.substring(0,1) != "B"){
+          noTakesMoves[key] = value
+        }
+      }
+      return noTakesMoves
+    }
+  }
+  #filterRooks(filteredMoves){
+    if(this.rooksTarget.checked){
+      return filteredMoves
+    }
+    else {
+      let noTakesMoves = {}
+      for (const [key, value] of Object.entries(filteredMoves)) {
+        if(key.substring(0,1) != "R"){
+          noTakesMoves[key] = value
+        }
+      }
+      return noTakesMoves
+    }
+  }
+  #filterQueens(filteredMoves){
+    if(this.queensTarget.checked){
+      return filteredMoves
+    }
+    else {
+      let noTakesMoves = {}
+      for (const [key, value] of Object.entries(filteredMoves)) {
+        if(key.substring(0,1) != "Q"){
           noTakesMoves[key] = value
         }
       }
@@ -147,14 +255,76 @@ export default class extends Controller {
     }
   }
 
-  #sortObject(object){
-    const sortedMoves = Object.entries(object)
-          .sort((a, b) => b[1] - a[1]) // Sort in descending order of values
-          .reduce((acc, [key, value]) => {
-            acc[key] = value;
-            return acc;
-          }, {});
-    return sortedMoves
+  #filterKings(filteredMoves){
+    if(this.kingsTarget.checked){
+      return filteredMoves
+    }
+    else {
+      let noTakesMoves = {}
+      for (const [key, value] of Object.entries(filteredMoves)) {
+        if(key.substring(0,1) != "K" && !key.includes("O") ){
+          noTakesMoves[key] = value
+        }
+      }
+      return noTakesMoves
+    }
+  }
+  #filterPromotions(filteredMoves){
+    if(this.promotionsTarget.checked){
+      return filteredMoves
+    }
+    else {
+      let noTakesMoves = {}
+      for (const [key, value] of Object.entries(filteredMoves)) {
+        if(!key.includes("=") ){
+          noTakesMoves[key] = value
+        }
+      }
+      return noTakesMoves
+    }
+  }
+
+
+  #filterTakes(filteredMoves){
+    if(this.takesTarget.checked){
+      return filteredMoves
+    }
+    else {
+      let noTakesMoves = {}
+      for (const [key, value] of Object.entries(filteredMoves)) {
+        if(!key.includes("x")){
+          noTakesMoves[key] = value
+        }
+      }
+      return noTakesMoves
+    }
+  }
+
+  #sortObject(object, sortMethod){
+    let sortedMoves = null;
+    switch(sortMethod){
+      case "tpd":
+         sortedMoves = Object.entries(object)
+              .sort((a, b) => b[1] - a[1]) // Sort in descending order of values
+              .reduce((acc, [key, value]) => {
+                acc[key] = value;
+                return acc;
+              }, {});
+        return sortedMoves
+        break;
+      case "tpa":
+         sortedMoves = Object.entries(object)
+              .sort((a, b) => a[1] - b[1]) // Sort in ascending order of values
+              .reduce((acc, [key, value]) => {
+                acc[key] = value;
+                return acc;
+              }, {});
+        return sortedMoves
+        break;
+      case "alphabetical":
+        return object
+        break;
+    }
   }
   #RGBCalc(mostMovesCount, value){
     let ratio = 255/(Math.cbrt(mostMovesCount))
@@ -174,53 +344,254 @@ export default class extends Controller {
   }
 
   #pMovesPlayed(sortedMoves){
-    let playedCount = 0
-    let notPlayedCount = 0
-    for (const [key, value] of Object.entries(sortedMoves)) {
+    let KnightPlayed = 0
+    let KnightLocked = 0
+    let BishopPlayed = 0
+    let BishopLocked = 0
+    let RookPlayed = 0
+    let RookLocked = 0
+    let QueenPlayed = 0
+    let QueenLocked = 0
+    let KingPlayed = 0
+    let KingLocked = 0
+    let PawnPlayed = 0
+    let PawnLocked = 0
 
+
+    for (const [key, value] of Object.entries(sortedMoves)) {
       if(value > 0){
-        playedCount += 1;
+        switch(key.substring(0,1)){
+          case "N":
+            KnightPlayed +=1
+            break
+          case "B":
+            BishopPlayed +=1
+            break
+          case "R":
+            RookPlayed +=1
+            break
+          case "Q":
+            QueenPlayed +=1
+            break
+          case "K":
+            KingPlayed +=1
+            break
+          default:
+            PawnPlayed +=1
+        }
       }
       else {
-        notPlayedCount += 1;
+        switch(key.substring(0,1)){
+          case "N":
+            KnightLocked +=1
+            break
+          case "B":
+            BishopLocked +=1
+            break
+          case "R":
+            RookLocked +=1
+            break
+          case "Q":
+            QueenLocked +=1
+            break
+          case "K":
+            KingLocked +=1
+            break
+          default:
+            PawnLocked +=1
+        }
       }
     }
-    const percentageTag = `<p>${(100*playedCount/(playedCount+notPlayedCount)).toFixed(2)}% of Moves Complete</p>`
-    document.querySelector(".statsContainer").insertAdjacentHTML("beforeend", percentageTag)
+    return [[PawnPlayed, PawnLocked], [KnightPlayed, KnightLocked], [BishopPlayed, BishopLocked], [RookPlayed, RookLocked], [QueenPlayed, QueenLocked], [KingPlayed, KingLocked]]
   }
 
   #pMatesPlayed(sortedMoves){
-    let playedCount = 0
-    let notPlayedCount = 0
-    for (const [key, value] of Object.entries(sortedMoves)) {
+    let KnightPlayed = 0
+    let KnightLocked = 0
+    let BishopPlayed = 0
+    let BishopLocked = 0
+    let RookPlayed = 0
+    let RookLocked = 0
+    let QueenPlayed = 0
+    let QueenLocked = 0
+    let KingPlayed = 0
+    let KingLocked = 0
+    let PawnPlayed = 0
+    let PawnLocked = 0
 
+    for (const [key, value] of Object.entries(sortedMoves)) {
       if(key.substring(key.length-1, key.length) == "#") {
-        if(value > 0 ){
-          playedCount += 1;
-        }
-        else {
-          notPlayedCount += 1;
+        if(value > 0){
+        switch(key.substring(0,1)){
+          case "N":
+            KnightPlayed +=1
+            break
+          case "B":
+            BishopPlayed +=1
+            break
+          case "R":
+            RookPlayed +=1
+            break
+          case "Q":
+            QueenPlayed +=1
+            break
+          case "K":
+            KingPlayed +=1
+            break
+          default:
+            PawnPlayed +=1
         }
       }
+      else {
+        switch(key.substring(0,1)){
+          case "N":
+            KnightLocked +=1
+            break
+          case "B":
+            BishopLocked +=1
+            break
+          case "R":
+            RookLocked +=1
+            break
+          case "Q":
+            QueenLocked +=1
+            break
+          case "K":
+            KingLocked +=1
+            break
+          default:
+            PawnLocked +=1
+        }
+      }
+      }
     }
-    const percentageTag = `<p>${(100*playedCount/(playedCount+notPlayedCount)).toFixed(2)}% of Mates Complete</p>`
-    document.querySelector(".statsContainer").insertAdjacentHTML("beforeend", percentageTag)
+    return [[PawnPlayed, PawnLocked], [KnightPlayed, KnightLocked], [BishopPlayed, BishopLocked], [RookPlayed, RookLocked], [QueenPlayed, QueenLocked], [KingPlayed, KingLocked]]
+  }
+
+  #pChecksPlayed(sortedMoves){
+    let KnightPlayed = 0
+    let KnightLocked = 0
+    let BishopPlayed = 0
+    let BishopLocked = 0
+    let RookPlayed = 0
+    let RookLocked = 0
+    let QueenPlayed = 0
+    let QueenLocked = 0
+    let KingPlayed = 0
+    let KingLocked = 0
+    let PawnPlayed = 0
+    let PawnLocked = 0
+
+    for (const [key, value] of Object.entries(sortedMoves)) {
+      if(key.substring(key.length-1, key.length) == "+") {
+        if(value > 0){
+        switch(key.substring(0,1)){
+          case "N":
+            KnightPlayed +=1
+            break
+          case "B":
+            BishopPlayed +=1
+            break
+          case "R":
+            RookPlayed +=1
+            break
+          case "Q":
+            QueenPlayed +=1
+            break
+          case "K":
+            KingPlayed +=1
+            break
+          default:
+            PawnPlayed +=1
+        }
+      }
+      else {
+        switch(key.substring(0,1)){
+          case "N":
+            KnightLocked +=1
+            break
+          case "B":
+            BishopLocked +=1
+            break
+          case "R":
+            RookLocked +=1
+            break
+          case "Q":
+            QueenLocked +=1
+            break
+          case "K":
+            KingLocked +=1
+            break
+          default:
+            PawnLocked +=1
+        }
+      }
+      }
+    }
+    return [[PawnPlayed, PawnLocked], [KnightPlayed, KnightLocked], [BishopPlayed, BishopLocked], [RookPlayed, RookLocked], [QueenPlayed, QueenLocked], [KingPlayed, KingLocked]]
   }
 
   #pSimplePlayed(sortedMoves){
-    let playedCount = 0
-    let notPlayedCount = 0
+    let KnightPlayed = 0
+    let KnightLocked = 0
+    let BishopPlayed = 0
+    let BishopLocked = 0
+    let RookPlayed = 0
+    let RookLocked = 0
+    let QueenPlayed = 0
+    let QueenLocked = 0
+    let KingPlayed = 0
+    let KingLocked = 0
+    let PawnPlayed = 0
+    let PawnLocked = 0
     for (const [key, value] of Object.entries(sortedMoves)) {
       if(key.substring(key.length-1, key.length) != "#" && key.substring(key.length-1, key.length) != "+") {
-        if(value > 0 ){
-          playedCount += 1;
+        if(value > 0){
+          switch(key.substring(0,1)){
+            case "N":
+              KnightPlayed +=1
+              break
+            case "B":
+              BishopPlayed +=1
+              break
+            case "R":
+              RookPlayed +=1
+              break
+            case "Q":
+              QueenPlayed +=1
+              break
+            case "K":
+              KingPlayed +=1
+              break
+            default:
+              PawnPlayed +=1
+          }
         }
         else {
-          notPlayedCount += 1;
+          switch(key.substring(0,1)){
+            case "N":
+              KnightLocked +=1
+              break
+            case "B":
+              BishopLocked +=1
+              break
+            case "R":
+              RookLocked +=1
+              break
+            case "Q":
+              QueenLocked +=1
+              break
+            case "K":
+              KingLocked +=1
+              break
+            default:
+              PawnLocked +=1
+          }
         }
+        }
+
       }
+      return [[PawnPlayed, PawnLocked], [KnightPlayed, KnightLocked], [BishopPlayed, BishopLocked], [RookPlayed, RookLocked], [QueenPlayed, QueenLocked], [KingPlayed, KingLocked]]
     }
-    const percentageTag = `<p>${(100*playedCount/(playedCount+notPlayedCount)).toFixed(2)}% of simple moves Complete</p>`
-    document.querySelector(".statsContainer").insertAdjacentHTML("beforeend", percentageTag)
-  }
+
 }

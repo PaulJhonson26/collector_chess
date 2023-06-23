@@ -7,6 +7,11 @@
 .movesContainer {
   // width: 100%;
   // padding: 20px;
+  margin: 20px;
+  background-color: #333333;
+  border-radius: 3px;
+  box-shadow: 1px 1px 10px rgba(0,0,0, 1);
+
 
 
 }
@@ -61,6 +66,10 @@ body {
 
 .dashboard{
   display: flex;
+  margin: 20px;
+  background-color: #333333;
+  border-radius: 3px;
+  box-shadow: 1px 1px 10px rgba(0,0,0, 1);
 }
 .container-inputs{
   width: 50%;
@@ -86,9 +95,11 @@ body {
   padding-inline: 10px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   div {
     display: flex;
     justify-content: space-between;
+    width: 50px;
   }
 }
 .filter-basic{
@@ -117,6 +128,7 @@ body {
 
   flex-wrap: wrap;
   display: flex;
+  justify-content: center;
   p {
     padding: 0;
   }
@@ -126,6 +138,7 @@ body {
   margin-top: 30px;
   flex-wrap: wrap;
   display: flex;
+  justify-content: center;
   p {
     padding: 0;
   }
@@ -133,4 +146,9 @@ body {
 
 .loading{
   font-size: 26px;
+}
+
+.container-graphs{
+  width: 50%;
+  height: 100%;
 }

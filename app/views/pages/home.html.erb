@@ -13,70 +13,81 @@
         <div class = "container-basic-misc">
           <form class ="filter filter-basic">
             <div>
-              <label>Checkmates</label>
-              <input type="checkbox" id="usernameInput" data-game-loader-target = "mates" data-action="click->game-loader#filter">
+              <label>#</label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "mates" data-action="click->game-loader#filter" checked>
             </div>
             <div>
-              <label>Checks</label>
+              <label>+</label>
               <input type="checkbox" id="usernameInput" data-game-loader-target = "checks" data-action="click->game-loader#filter">
             </div>
             <div>
-              <label>Regular Moves</label>
+              <label><i class="fa-solid fa-chess-board"></i></label>
               <input type="checkbox" id="usernameInput" data-game-loader-target = "regulars" data-action="click->game-loader#filter">
             </div>
           </form>
 
           <form class ="filter filter-misc">
             <div>
-              <label>Exclude Captures </label>
-              <input type="checkbox" id="usernameInput" data-game-loader-target = "takes" data-action="click->game-loader#filter">
+              <label> x </label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "takes" data-action="click->game-loader#filter" checked>
             </div>
             <div>
-              <label> Exclude Promotions</label>
-              <input type="checkbox" id="usernameInput" data-game-loader-target = "promotions" data-action="click->game-loader#filter">
+              <label> P= </label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "promotions" data-action="click->game-loader#filter" checked>
             </div>
           </form>
         </div>
         <div class = "container-piece">
           <form class ="filter filter-piece">
             <div>
-              <label>Pawn Moves</label>
-              <input type="checkbox" id="usernameInput" data-game-loader-target = "pawns" data-action="click->game-loader#filter">
+              <label><i class="fa-regular fa-chess-pawn"></i></label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "pawns" data-action="click->game-loader#filter" checked>
             </div>
             <div>
-              <label>knight Moves</label>
-              <input type="checkbox" id="usernameInput" data-game-loader-target = "knights" data-action="click->game-loader#filter">
+              <label><i class="fa-regular fa-chess-knight"></i></label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "knights" data-action="click->game-loader#filter" checked>
             </div>
             <div>
-              <label>Bishop Moves</label>
-              <input type="checkbox" id="usernameInput" data-game-loader-target = "bishops" data-action="click->game-loader#filter">
+              <label><i class="fa-regular fa-chess-bishop"></i></label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "bishops" data-action="click->game-loader#filter" checked>
             </div>
             <div>
-              <label>Rook Moves</label>
-              <input type="checkbox" id="usernameInput" data-game-loader-target = "rooks" data-action="click->game-loader#filter">
+              <label><i class="fa-regular fa-chess-rook"></i></label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "rooks" data-action="click->game-loader#filter" checked>
             </div>
             <div>
-              <label>Queen Moves</label>
-              <input type="checkbox" id="usernameInput" data-game-loader-target = "queens" data-action="click->game-loader#filter">
+              <label><i class="fa-regular fa-chess-queen"></i></label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "queens" data-action="click->game-loader#filter" checked>
             </div>
             <div>
-              <label>King Moves</label>
-              <input type="checkbox" id="usernameInput" data-game-loader-target = "kings" data-action="click->game-loader#filter">
+              <label><i class="fa-regular fa-chess-king"></i></label>
+              <input type="checkbox" id="usernameInput" data-game-loader-target = "kings" data-action="click->game-loader#filter" checked>
             </div>
           </form>
         </div>
       </div>
     </div>
 
-    <div data-game-loader-target = "gamesStats" class = "statsContainer" id = "statsContainer">
+    <div class = "statsContainer" id = "statsContainer">
       <div class = "d-flex align-items-center">
         <i class="fa-solid fa-chart-simple icon-stats"></i>
         <h4 class = "header-stats">Stats</h4>
       </div>
+      <div class = "d-flex">
+        <div class = "container-graphs" data-game-loader-target = "gamesStatsMinor"></div>
+        <div class = "container-graphs" data-game-loader-target = "gamesStatsMajor"></div>
+      </div>
 
     </div>
   </div>
-
+  <form action="">
+    <select id="sort-method" data-game-loader-target = "sortMethod">
+      <option value="alphabetical">Alphabetical</option>
+      <option value="tpd">Most Played</option>
+      <option value="tpa">Leas Played</option>
+    </select>
+    <input type="submit" value="Sort" data-action="click->game-loader#sort">
+  </form>
   <div class = "movesContainer" id = "movesContainer">
     <div data-game-loader-target = "collectedMoves" class = collected-moves id = collected-moves>
     </div>
@@ -91,5 +102,13 @@
   <div class = "card-move">
     <p class = "card-move-notation"></p>
     <p class = "card-move-count"></p>
+  </div>
+</template>
+
+<template id = "statBox">
+  <div class = "stats-type-container">
+    <div class = "stats-progression stats-mates"></div>
+    <div class = "stats-progression stats-checks"> </div>
+    <div class = "stats-progression stats-normal"> </div>
   </div>
 </template>
