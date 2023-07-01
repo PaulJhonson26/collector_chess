@@ -152,3 +152,14 @@ body {
   width: 50%;
   height: 100%;
 }
+
+
+.piece-stats-display{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  i{
+    padding-inline: 3px;
+    font-size: 20px;
+  }
+}

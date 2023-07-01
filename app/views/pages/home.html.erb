@@ -74,8 +74,60 @@
         <h4 class = "header-stats">Stats</h4>
       </div>
       <div class = "d-flex">
-        <div class = "container-graphs" data-game-loader-target = "gamesStatsMinor"></div>
-        <div class = "container-graphs" data-game-loader-target = "gamesStatsMajor"></div>
+        <div class = "container-graphs" data-game-loader-target = "gamesStatsMinor">
+          <div class = "piece-stats-display">
+            <i class="fa-regular fa-chess-pawn"></i>
+            <div class = "stats-type-container" id = "pawn-stats-graphs">
+              <div class = "stats-progression stats-mates"></div>
+              <div class = "stats-progression stats-checks"> </div>
+              <div class = "stats-progression stats-normal"> </div>
+            </div>
+          </div>
+          <div class = "piece-stats-display">
+            <i class="fa-regular fa-chess-knight"></i>
+            <div class = "stats-type-container" id = "knight-stats-graphs">
+              <div class = "stats-progression stats-mates"></div>
+              <div class = "stats-progression stats-checks"> </div>
+              <div class = "stats-progression stats-normal"> </div>
+            </div>
+          </div>
+          <div class = "piece-stats-display">
+            <i class="fa-regular fa-chess-bishop"></i>
+            <div class = "stats-type-container" id = "bishop-stats-graphs">
+              <div class = "stats-progression stats-mates"></div>
+              <div class = "stats-progression stats-checks"> </div>
+              <div class = "stats-progression stats-normal"> </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class = "container-graphs" data-game-loader-target = "gamesStatsMajor">
+          <div class = "piece-stats-display">
+            <i class="fa-regular fa-chess-rook"></i>
+            <div class = "stats-type-container" id = "rook-stats-graphs">
+              <div class = "stats-progression stats-mates"></div>
+              <div class = "stats-progression stats-checks"> </div>
+              <div class = "stats-progression stats-normal"> </div>
+            </div>
+          </div>
+          <div class = "piece-stats-display">
+            <i class="fa-regular fa-chess-queen"></i>
+            <div class = "stats-type-container" id = "queen-stats-graphs">
+              <div class = "stats-progression stats-mates"></div>
+              <div class = "stats-progression stats-checks"> </div>
+              <div class = "stats-progression stats-normal"> </div>
+            </div>
+          </div>
+          <div class = "piece-stats-display">
+            <i class="fa-regular fa-chess-king"></i>
+            <div class = "stats-type-container" id = "king-stats-graphs">
+              <div class = "stats-progression stats-mates"></div>
+              <div class = "stats-progression stats-checks"> </div>
+              <div class = "stats-progression stats-normal"> </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -106,9 +158,5 @@
 </template>
 
 <template id = "statBox">
-  <div class = "stats-type-container">
-    <div class = "stats-progression stats-mates"></div>
-    <div class = "stats-progression stats-checks"> </div>
-    <div class = "stats-progression stats-normal"> </div>
-  </div>
+
 </template>

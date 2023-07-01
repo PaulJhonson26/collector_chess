@@ -5,15 +5,22 @@
 }
 
 .stats-progression{
-  height: 10px;
+  height: 20%;
+  font-size: 9px;
+  text-align: right;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
 }
 
 .stats-mates{
   background-color: red;
+  width: 0;
 }
 .stats-checks{
   background-color: lightcoral;
+  width: 0;
 }
 .stats-normal{
   background-color: lightpink;
+  width: 0;
 }

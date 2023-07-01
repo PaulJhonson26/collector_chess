@@ -30,21 +30,47 @@ export default class extends Controller {
     console.log("Regulars ",this.regularsTarget.checked)
     let filteredMoves = {}
     for (const [key, value] of Object.entries(Moves)) {
-      if (this.checksTarget.checked == true){
-        if(key.substring(key.length-1, key.length) == "+"){
-          filteredMoves[key] = value
-        }
-
-      }
+      let matesBar = document.querySelectorAll(".stats-mates")
       if (this.matesTarget.checked == true){
         if(key.substring(key.length-1, key.length) == "#"){
           filteredMoves[key] = value
         }
+        matesBar.forEach(bar => {
+          bar.classList.remove("d-none")
+        })
       }
+      else {
+        matesBar.forEach(bar => {
+          bar.classList.add("d-none")
+        })
+      }
+      let checksBar = document.querySelectorAll(".stats-checks")
+      if (this.checksTarget.checked == true){
+        if(key.substring(key.length-1, key.length) == "+"){
+          filteredMoves[key] = value
+        }
+        checksBar.forEach(bar => {
+          bar.classList.remove("d-none")
+        })
+      }
+      else{
+        checksBar.forEach(bar => {
+          bar.classList.add("d-none")
+        })
+      }
+      let regularBar = document.querySelectorAll(".stats-normal")
       if (this.regularsTarget.checked == true){
         if(key.substring(key.length-1, key.length) != "#" && key.substring(key.length-1, key.length) != "+"){
           filteredMoves[key] = value
         }
+        regularBar.forEach(bar => {
+          bar.classList.remove("d-none")
+        })
+      }
+      else {
+        regularBar.forEach(bar => {
+          bar.classList.add("d-none")
+        })
       }
     }
     console.log(filteredMoves)
@@ -121,13 +147,41 @@ export default class extends Controller {
 
   #createStats(allPlayed, matesPlayed, checksPlayed, simplePlayed){
     const template = document.querySelector("#statBox")
+    const minorStatsContainer = this.gamesStatsMinorTarget
+    const majorStatsContainer = this.gamesStatsMajorTarget
     allPlayed.forEach((Piece, index) => {
-      const minorStatsContainer = this.gamesStatsMinorTarget
-      const majorStatsContainer = this.gamesStatsMajorTarget
-      const clone = template.content.cloneNode(true);
-      const matesBar = clone.querySelector(".stats-mates")
-      const checksBar = clone.querySelector(".stats-checks")
-      const simpleBar = clone.querySelector(".stats-normal")
+      let pieceStats = null
+      switch(index){
+        case 0:
+          pieceStats = document.querySelector("#pawn-stats-graphs")
+          break;
+
+        case 1:
+          pieceStats = document.querySelector("#knight-stats-graphs")
+          break;
+
+        case 2:
+          pieceStats = document.querySelector("#bishop-stats-graphs")
+          break;
+
+        case 3:
+          pieceStats = document.querySelector("#rook-stats-graphs")
+          break;
+
+        case 4:
+          pieceStats = document.querySelector("#queen-stats-graphs")
+          break;
+
+        case 5:
+          pieceStats = document.querySelector("#king-stats-graphs")
+          break;
+
+
+      }
+
+      const matesBar = pieceStats.querySelector(".stats-mates")
+      const checksBar = pieceStats.querySelector(".stats-checks")
+      const simpleBar = pieceStats.querySelector(".stats-normal")
 
       let matesProgression = 100*matesPlayed[index][0]/(matesPlayed[index][0]+matesPlayed[index][1])
       let checksProgression = 100*checksPlayed[index][0]/(checksPlayed[index][0]+checksPlayed[index][1])
@@ -136,13 +190,9 @@ export default class extends Controller {
       matesBar.style.width = `${matesProgression}%`
       checksBar.style.width = `${checksProgression}%`
       simpleBar.style.width = `${simpleProgression}%`
-      //      index < 3 ?  minorStatsContainer.appendChild(clone) : majorStatsContainer.appendChild(clone)
-      if(index<3){
-        minorStatsContainer.appendChild(clone)
-      }
-      else {
-        majorStatsContainer.appendChild(clone)
-      }
+      matesBar.innerText = `${matesProgression.toFixed(1)}%`
+      checksBar.innerText = `${checksProgression.toFixed(1)}%`
+      simpleBar.innerText = `${simpleProgression.toFixed(1)}%`
 
     });
   }
