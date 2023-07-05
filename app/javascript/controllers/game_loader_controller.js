@@ -1,8 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 import { createAllMovesObject } from "chess_moves"
+import ndjsonFetch from 'ndjson-fetch';
 
 let Moves;
 let fMoves;
+
 ////Features to add
 /// click on move and get all games played(json file has game link), just add array games
 export default class extends Controller {
@@ -94,48 +96,53 @@ export default class extends Controller {
     this.loadingTarget.classList.toggle("d-none")
     e.preventDefault();
     const user = this.usernameTarget.value
-    this.usernameTarget.value = user
-    console.log(user)
-
+    // this.usernameTarget.value = user
+    // console.log(user)
     const token = 'lip_tBb1t8gdHDGhWMlrmd7i';
     const allMovesObject = createAllMovesObject()
 
-    const url = `https://lichess.org/api/games/user/${user}`;
+    const url = `https://lichess.org/api/games/user/${user}?max=10&pgnInJson=true}`;
     const headers = {
       Authorization:  `Bearer ${token}`,
+      Accept: 'application/x-ndjson'
     };
 
-    fetch(url, { headers })
-      .then(res => res.text())
+    ndjsonFetch(url, { headers })
       .then(data => {
-        console.log(data)
-        let games = data.split(/\n\n\n/)
+        // Handle the parsed NDJSON data here
+        console.log(data);
+      })
+      .catch(error => {
+        // Handle any errors
+        console.error(error);
 
-        games.forEach((game, i) => {
-          let style = ""
-            console.log(i, game)
-            if (game != "" && game != undefined) {
-              let parsedGame = JSON.parse(parser.pgn2json(game));
-              // let movesString = ""
-              parsedGame.moves.forEach(move => {
-                // movesString = `${movesString} ${move}, `
-                allMovesObject[move] += 1;
-              });
-            }
-        })
-        //const sortedMoves = allMovesObject
-        Moves = allMovesObject
-        const sortedMoves = this.#sortObject(allMovesObject, "tpd")
+        // let games = data.split(/\n\n\n/)
 
-        //adding stats to page
-        let allPlayed = this.#pMovesPlayed(sortedMoves)
-        let matesPlayed = this.#pMatesPlayed(sortedMoves)
-        let checksPlayed = this.#pChecksPlayed(sortedMoves)
-        let simplePlayed = this.#pSimplePlayed(sortedMoves)
+        // games.forEach((game, i) => {
+        //   let style = ""
+        //     console.log(i, game)
+        //     if (game != "" && game != undefined) {
+        //       let parsedGame = JSON.parse(parser.pgn2json(game));
+        //       // let movesString = ""
+        //       parsedGame.moves.forEach(move => {
+        //         // movesString = `${movesString} ${move}, `
+        //         allMovesObject[move] += 1;
+        //       });
+        //     }
+        // })
+        // //const sortedMoves = allMovesObject
+        // Moves = allMovesObject
+        // const sortedMoves = this.#sortObject(allMovesObject, "tpd")
 
-        this.#createStats(allPlayed, matesPlayed, checksPlayed, simplePlayed)
-        this.loadingTarget.classList.toggle("d-none")
-        this.filter()
+        // //adding stats to page
+        // let allPlayed = this.#pMovesPlayed(sortedMoves)
+        // let matesPlayed = this.#pMatesPlayed(sortedMoves)
+        // let checksPlayed = this.#pChecksPlayed(sortedMoves)
+        // let simplePlayed = this.#pSimplePlayed(sortedMoves)
+
+        // this.#createStats(allPlayed, matesPlayed, checksPlayed, simplePlayed)
+        // this.loadingTarget.classList.toggle("d-none")
+        // this.filter()
 
 
 
