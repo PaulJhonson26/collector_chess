@@ -99,50 +99,57 @@ export default class extends Controller {
 
     const token = 'lip_tBb1t8gdHDGhWMlrmd7i';
     const allMovesObject = createAllMovesObject()
-
+    const userInfoUrl = `https://liches.org/api/user/${user}`
     const url = `https://lichess.org/api/games/user/${user}`;
     const headers = {
       Authorization:  `Bearer ${token}`,
     };
-
-    fetch(url, { headers })
-      .then(res => res.text())
+    const userStartDate = 0
+    fetch(url, { headers})
+      .then(res => res.json())
       .then(data => {
-        console.log(data)
-        let games = data.split(/\n\n\n/)
+        console.log(data.createdAt)
+        userStartDate = data.createdAt
+      })
 
-        games.forEach((game, i) => {
-          let style = ""
-            console.log(i, game)
-            if (game != "" && game != undefined) {
-              let parsedGame = JSON.parse(parser.pgn2json(game));
-              // let movesString = ""
-              parsedGame.moves.forEach(move => {
-                // movesString = `${movesString} ${move}, `
-                allMovesObject[move] += 1;
-              });
-            }
-        })
-        //const sortedMoves = allMovesObject
-        Moves = allMovesObject
-        const sortedMoves = this.#sortObject(allMovesObject, "tpd")
+    // fetch(url, { headers })
+    //   .then(res => res.text())
+    //   .then(data => {
+    //     console.log(data)
+    //     let games = data.split(/\n\n\n/)
 
-        //adding stats to page
-        let allPlayed = this.#pMovesPlayed(sortedMoves)
-        let matesPlayed = this.#pMatesPlayed(sortedMoves)
-        let checksPlayed = this.#pChecksPlayed(sortedMoves)
-        let simplePlayed = this.#pSimplePlayed(sortedMoves)
+    //     games.forEach((game, i) => {
+    //       let style = ""
+    //         console.log(i, game)
+    //         if (game != "" && game != undefined) {
+    //           let parsedGame = JSON.parse(parser.pgn2json(game));
+    //           // let movesString = ""
+    //           parsedGame.moves.forEach(move => {
+    //             // movesString = `${movesString} ${move}, `
+    //             allMovesObject[move] += 1;
+    //           });
+    //         }
+    //     })
+    //     //const sortedMoves = allMovesObject
+    //     Moves = allMovesObject
+    //     const sortedMoves = this.#sortObject(allMovesObject, "tpd")
 
-        this.#createStats(allPlayed, matesPlayed, checksPlayed, simplePlayed)
-        this.loadingTarget.classList.toggle("d-none")
-        this.filter()
+    //     //adding stats to page
+    //     let allPlayed = this.#pMovesPlayed(sortedMoves)
+    //     let matesPlayed = this.#pMatesPlayed(sortedMoves)
+    //     let checksPlayed = this.#pChecksPlayed(sortedMoves)
+    //     let simplePlayed = this.#pSimplePlayed(sortedMoves)
+
+    //     this.#createStats(allPlayed, matesPlayed, checksPlayed, simplePlayed)
+    //     this.loadingTarget.classList.toggle("d-none")
+    //     this.filter()
 
 
 
 
-        // var json = parser.pgn2json(data);
-        // console.log(json)
-      });
+    //     // var json = parser.pgn2json(data);
+    //     // console.log(json)
+    //   });
   }
 
   #createStats(allPlayed, matesPlayed, checksPlayed, simplePlayed){
